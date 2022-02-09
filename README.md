@@ -1,4 +1,4 @@
 # txnChecker
-Checks the receiver's inflow in an Ethereum block real-time.
+Checks the txn receiver's activity in an Ethereum block real-time.
 
 
