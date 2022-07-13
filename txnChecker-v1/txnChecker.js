@@ -21,7 +21,7 @@ class TxnChecker {
 
         // check if the to exists
         if (txn.to) {
-          const reciever = txn.to.toLowerCase();
+          const reciever = txn.from.toLowerCase();
           if (reciever === this.accounts) {
             console.log(`Txn found on block: ${blockNumber}`);
             console.log({

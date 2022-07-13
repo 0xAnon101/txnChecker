@@ -7,31 +7,33 @@ class TxnChecker {
   subscription = null;
 
   constructor(projectId, account) {
+    console.log(account);
     this.web3 = new ethers.providers.WebSocketProvider(
       `wss://rinkeby.infura.io/ws/v3/${projectId}`
     );
-    this.accounts = account.toLowerCase();
+    if (account) this.accounts = account.toLowerCase();
   }
 
   subscribe(topic) {
     this.web3.on(topic, async (txnHash) => {
-      setTimeout(async () => {
-        try {
-          const txn = await this.web3.getTransaction(txnHash);
-          if (txn !== null) {
-            console.log(`txn from: ${txn.from}`);
-            if (this.accounts === txn.to.toLowerCase()) {
-              console.log({
-                address: txn.from,
-                value: ethers.utils.formatEther(txn.value),
-                timestamp: new Date(),
-              });
-            }
+      try {
+        const txn = await this.web3.getTransaction(txnHash);
+        const block = await this.web3.getBlock("latest");
+        const blockNumber = block.number;
+        console.log(`Searching block ${blockNumber}`);
+
+        if (txn !== null && txn.to !== null) {
+          if (this.accounts === txn.from.toLowerCase()) {
+            console.log({
+              address: txn.from,
+              value: ethers.utils.formatEther(txn.value),
+              timestamp: new Date(),
+            });
           }
-        } catch (err) {
-          console.error(err);
         }
-      }, 60000);
+      } catch (err) {
+        console.error(err);
+      }
     });
   }
 }
