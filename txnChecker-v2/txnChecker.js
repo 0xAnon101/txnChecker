@@ -16,24 +16,24 @@ class TxnChecker {
 
   subscribe(topic) {
     this.web3.on(topic, async (txnHash) => {
-      try {
-        const txn = await this.web3.getTransaction(txnHash);
-        const block = await this.web3.getBlock("latest");
-        const blockNumber = block.number;
-        console.log(`Searching block ${blockNumber}`);
-
-        if (txn !== null && txn.to !== null) {
-          if (this.accounts === txn.from.toLowerCase()) {
-            console.log({
-              address: txn.from,
-              value: ethers.utils.formatEther(txn.value),
-              timestamp: new Date(),
-            });
+      setTimeout(async () => {
+        try {
+          const txn = await this.web3.getTransaction(txnHash);
+          if (txn !== null && txn.to !== null) {
+            if (this.accounts === txn.from.toLowerCase()) {
+              // dumps the data onto the CLI
+              console.log({
+                address: txn.from,
+                value: ethers.utils.formatEther(txn.value),
+                timestamp: new Date(),
+                txnHash: txn.hash,
+              });
+            }
           }
+        } catch (err) {
+          console.error(err);
         }
-      } catch (err) {
-        console.error(err);
-      }
+      }, 60000);
     });
   }
 }
